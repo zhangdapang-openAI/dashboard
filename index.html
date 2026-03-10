@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大胖的仪表盘</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/tools.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --accent-cyan: #00d4ff;
+            --accent-gold: #ffd700;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 背景动画 */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 60%);
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* 顶部栏 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* 主布局 */
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+
+        /* 左侧导航 */
+        .sidebar {
+            width: 280px;
+            background: rgba(18, 18, 26, 0.6);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            position: fixed;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-section {
+            margin-bottom: 40px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            padding-left: 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--accent-cyan);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* 主内容区 */
+        .content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* 顶部卡片栏 */
+        .top-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .card-content {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .card-value {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .card-unit {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .card-desc {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* 天气卡片特殊样式 */
+        .weather-card .card-icon {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.2);
+            animation: weatherPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes weatherPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); }
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .weather-temp {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .weather-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .weather-city {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .weather-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* 主内容区域 */
+        .main-area {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            min-height: 500px;
+        }
+
+        .area-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .area-title {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .area-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* 待办列表 */
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: all 0.3s;
+        }
+
+        .todo-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .todo-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .todo-checkbox:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .todo-checkbox.checked {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .todo-text.completed {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .todo-priority {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .priority-medium {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--accent-gold);
+        }
+
+        .priority-low {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--accent-green);
+        }
+
+        .todo-delete {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+
+        .todo-item:hover .todo-delete {
+            opacity: 1;
+        }
+
+        .todo-delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        /* 添加待办输入 */
+        .todo-input-area {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .todo-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .todo-input:focus {
+            border-color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .todo-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* 优先级选择器 */
+        .priority-selector {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 6px;
+        }
+
+        .priority-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .priority-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .priority-btn.active {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .priority-btn.active[data-priority="high"] {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .priority-btn.active[data-priority="medium"] {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--accent-gold);
+        }
+
+        .priority-btn.active[data-priority="low"] {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--accent-green);
+        }
+
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .priority-dot.high {
+            background: var(--accent-red);
+        }
+
+        .priority-dot.medium {
+            background: var(--accent-gold);
+        }
+
+        .priority-dot.low {
+            background: var(--accent-green);
+        }
+
+        /* 工具网格 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 16px;
+        }
+
+        .tool-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .tool-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-hint {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .main-area {
+                padding: 20px;
+            }
+
+            .area-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- 顶部栏 -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <span>大胖的仪表盘</span>
+        </div>
+        <div class="header-actions">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <button class="header-btn" onclick="refreshWeather()">🔄</button>
+            <button class="header-btn">⚙️</button>
+            <button class="header-btn">👤</button>
+        </div>
+    </header>
+
+    <!-- 主布局 -->
+    <div class="main-layout">
+        <!-- 左侧导航 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">导航</div>
+                <div class="nav-item active" onclick="switchTab('todo')">
+                    <span class="nav-icon">📋</span>
+                    <span>待办事项</span>
+                    <span class="nav-badge" id="todoCount">0</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('tools')">
+                    <span class="nav-icon">🛠️</span>
+                    <span>工具箱</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">快捷链接</div>
+                <div class="nav-item" onclick="openLink('https://zhangdapang-openai.github.io/snake-game/')">
+                    <span class="nav-icon">🎮</span>
+                    <span>贪吃蛇游戏</span>
+                </div>
+                <div class="nav-item" onclick="openLink('https://zhangdapang-openai.github.io/annual-plan-2026/')">
+                    <span class="nav-icon">🎯</span>
+                    <span>2026目标</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="content">
+            <!-- 顶部卡片栏 -->
+            <div class="top-cards">
+                <!-- 天气卡片 -->
+                <div class="card weather-card">
+                    <div class="card-header">
+                        <span class="card-title">今日天气</span>
+                        <div class="card-icon">☀️</div>
+                    </div>
+                    <div class="weather-info">
+                        <span class="weather-temp" id="weatherTemp">--°</span>
+                        <div class="weather-details">
+                            <span class="weather-city">杭州</span>
+                            <span class="weather-status" id="weatherStatus">加载中...</span>
+                        </div>
+                    </div>
+                    <div class="card-desc" id="weatherDetail">--</div>
+                </div>
+
+                <!-- 待办统计卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">待办事项</span>
+                        <div class="card-icon" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2);">📋</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value" id="todoTotal">0</span>
+                        <span class="card-unit">个任务</span>
+                    </div>
+                    <div class="card-desc">
+                        已完成 <span id="todoCompleted" style="color: var(--accent-green);">0</span> / 剩余 <span id="todoRemaining" style="color: var(--accent-cyan);">0</span>
+                    </div>
+                </div>
+
+                <!-- 日期卡片 -->
+                <div class="card" onclick="openTool('calendar')" style="cursor: pointer;">
+                    <div class="card-header">
+                        <span class="card-title">今日日期</span>
+                        <div class="card-icon" style="background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.2);">📅</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-value" id="currentDate">--</span>
+                    </div>
+                    <div class="card-desc" id="currentWeekday">--</div>
+                </div>
+            </div>
+
+            <!-- 主内容区域 -->
+            <div class="main-area" id="mainArea">
+                <!-- 待办视图 -->
+                <div id="todoView">
+                    <div class="area-header">
+                        <h2 class="area-title">
+                            <span>📋</span>
+                            <span>待办事项</span>
+                        </h2>
+                        <div class="area-actions">
+                            <button class="btn btn-secondary" onclick="clearCompleted()">清除已完成</button>
+                            <button class="btn btn-primary" onclick="focusInput()">+ 新建待办</button>
+                        </div>
+                    </div>
+
+                    <div class="todo-input-area">
+                        <input type="text" class="todo-input" id="todoInput" placeholder="添加新的待办事项..." onkeypress="handleEnter(event)">
+                        <div class="priority-selector" id="prioritySelector">
+                            <button class="priority-btn" data-priority="high" onclick="selectPriority('high')">
+                                <span class="priority-dot high"></span>高
+                            </button>
+                            <button class="priority-btn active" data-priority="medium" onclick="selectPriority('medium')">
+                                <span class="priority-dot medium"></span>中
+                            </button>
+                            <button class="priority-btn" data-priority="low" onclick="selectPriority('low')">
+                                <span class="priority-dot low"></span>低
+                            </button>
+                        </div>
+                        <input type="hidden" id="priorityValue" value="medium">
+                        <button class="btn btn-primary" onclick="addTodo()">添加</button>
+                    </div>
+
+                    <div class="todo-list" id="todoList">
+                        <!-- 待办列表将在这里渲染 -->
+                    </div>
+                </div>
+
+                <!-- 工具视图 -->
+                <div id="toolsView" style="display: none;">
+                    <div class="area-header">
+                        <h2 class="area-title">
+                            <span>🛠️</span>
+                            <span>工具箱</span>
+                        </h2>
+                    </div>
+
+                    <div class="tools-grid">
+                        <div class="tool-card" onclick="openTool('pomodoro')">
+                            <div class="tool-icon">⏱️</div>
+                            <div class="tool-name">番茄钟</div>
+                            <div class="tool-desc">25分钟专注计时</div>
+                        </div>
+
+                        <div class="tool-card" onclick="openTool('calculator')">
+                            <div class="tool-icon">🧮</div>
+                            <div class="tool-name">计算器</div>
+                            <div class="tool-desc">快速计算工具</div>
+                        </div>
+
+                        <div class="tool-card" onclick="openTool('countdown')">
+                            <div class="tool-icon">⏳</div>
+                            <div class="tool-name">倒计时</div>
+                            <div class="tool-desc">自定义倒计时</div>
+                        </div>
+
+                        <div class="tool-card" onclick="openTool('note')">
+                            <div class="tool-icon">📝</div>
+                            <div class="tool-name">快速笔记</div>
+                            <div class="tool-desc">临时记录想法</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 工具模态框 -->
+    <div class="modal" id="toolModal">
+        <div class="modal-overlay" onclick="closeTool()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">工具</h3>
+                <button class="modal-close" onclick="closeTool()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 工具内容将在这里动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

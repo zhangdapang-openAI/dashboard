@@ -1,0 +1,516 @@
+/* 工具样式 - 小胖出品 */
+
+/* 模态框 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    position: relative;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: var(--shadow-glow);
+    animation: modalSlide 0.3s ease;
+}
+
+@keyframes modalSlide {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+.modal-body {
+    padding: 28px;
+    overflow-y: auto;
+    max-height: calc(80vh - 80px);
+}
+
+/* 番茄钟样式 */
+.pomodoro-display {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.pomodoro-time {
+    font-size: 80px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -2px;
+}
+
+.pomodoro-status {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.pomodoro-controls {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.pomodoro-btn {
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.pomodoro-btn.primary {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    color: white;
+}
+
+.pomodoro-btn.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.pomodoro-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+}
+
+.pomodoro-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.pomodoro-stat {
+    text-align: center;
+}
+
+.pomodoro-stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+}
+
+.pomodoro-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 计算器样式 */
+.calculator {
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.calc-display {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    text-align: right;
+}
+
+.calc-expression {
+    font-size: 14px;
+    color: var(--text-muted);
+    min-height: 20px;
+    margin-bottom: 8px;
+    word-break: break-all;
+}
+
+.calc-result {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+.calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.calc-btn {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: none;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.calc-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+.calc-btn.operator {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
+    color: var(--accent-cyan);
+}
+
+.calc-btn.operator:hover {
+    background: rgba(0, 212, 255, 0.2);
+}
+
+.calc-btn.equals {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    color: white;
+    grid-column: span 2;
+    aspect-ratio: auto;
+}
+
+.calc-btn.equals:hover {
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+}
+
+.calc-btn.clear {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--accent-red);
+}
+
+.calc-btn.clear:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* 倒计时样式 */
+.countdown-setup {
+    margin-bottom: 32px;
+}
+
+.countdown-inputs {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.countdown-input-group {
+    text-align: center;
+}
+
+.countdown-input-group input {
+    width: 80px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.countdown-input-group input:focus {
+    border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.countdown-input-group label {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.countdown-display {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.countdown-time {
+    font-size: 64px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -2px;
+}
+
+.countdown-controls {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+/* 快速笔记样式 */
+.note-editor {
+    margin-bottom: 24px;
+}
+
+.note-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.8;
+    resize: vertical;
+    outline: none;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.note-textarea:focus {
+    border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.note-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.note-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.note-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.note-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.note-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.note-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.note-item-time {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.note-item-delete {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.note-item:hover .note-item-delete {
+    opacity: 1;
+}
+
+.note-item-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--accent-red);
+}
+
+.note-item-preview {
+    font-size: 14px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+
+/* 日历样式 */
+.calendar-container {
+    padding: 10px;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding: 0 10px;
+}
+
+.calendar-nav {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-nav:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: var(--accent-cyan);
+}
+
+.calendar-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.calendar-weekdays span {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 8px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+}
+
+.calendar-day:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border);
+}
+
+.calendar-day.empty {
+    background: transparent;
+    cursor: default;
+}
+
+.calendar-day.today {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+}
