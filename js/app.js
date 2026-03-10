@@ -1,7 +1,7 @@
 /**
- * 大胖的仪表盘 - 完整版
+ * 我的仪表盘
  * 小胖出品，必属精品
- * 版本：2.0.0 - 全功能版
+ * 版本：v1.0.2
  */
 
 // ==================== 应用主对象 ====================
@@ -115,6 +115,9 @@ const App = {
                 
                 const icon = this.getWeatherIcon(condition);
                 document.getElementById('weatherIcon').textContent = icon;
+                
+                // 更新温馨提示
+                updateWeatherTip(now.temp, condition);
             } else {
                 throw new Error('Invalid weather data');
             }
@@ -778,7 +781,7 @@ function toggleSidebar() {
 }
 
 function openLink(url) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 function openTool(tool) {
@@ -896,6 +899,73 @@ function loadCity() {
             document.getElementById('weatherCityTitle').textContent = App.currentCity.name;
         }
     }
+}
+
+// ==================== 温馨提示 ====================
+
+function updateWeatherTip(temp, condition) {
+    const tipEl = document.getElementById('weatherTip');
+    const iconEl = tipEl.querySelector('.weather-tip-icon');
+    const textEl = tipEl.querySelector('.weather-tip-text');
+    
+    const tempNum = parseInt(temp);
+    const conditionLower = condition.toLowerCase();
+    
+    // 判断天气状况
+    const isRain = /雨|雪|雹|霰/.test(condition);
+    const isStorm = /雷|暴|大风|台风/.test(condition);
+    const isExtreme = /雾|霾|沙尘/.test(condition);
+    
+    let tipClass = 'normal';
+    let tipIcon = '💡';
+    let tipText = '';
+    
+    if (isStorm) {
+        // 极端天气
+        tipClass = 'rain';
+        tipIcon = '⚠️';
+        tipText = '天气异常，请注意人身安全，尽量减少外出';
+    } else if (isRain) {
+        // 雨雪天气
+        tipClass = 'rain';
+        tipIcon = '☔';
+        tipText = '今天有雨，出门记得带伞，注意防滑';
+    } else if (isExtreme) {
+        // 雾霾沙尘
+        tipClass = 'rain';
+        tipIcon = '😷';
+        tipText = '空气质量不佳，外出请佩戴口罩，注意防护';
+    } else if (tempNum <= 5) {
+        // 寒冷天气
+        tipClass = 'cold';
+        tipIcon = '🧥';
+        tipText = '天气寒冷，请注意保暖，多穿衣服别着凉';
+    } else if (tempNum >= 35) {
+        // 炎热天气
+        tipClass = 'hot';
+        tipIcon = '💧';
+        tipText = '天气炎热，注意防暑降温，多喝水避免中暑';
+    } else if (tempNum >= 30) {
+        // 较热天气
+        tipClass = 'hot';
+        tipIcon = '🌞';
+        tipText = '天气较热，注意防晒补水，适当休息';
+    } else if (tempNum <= 10) {
+        // 较冷天气
+        tipClass = 'cold';
+        tipIcon = '🧣';
+        tipText = '天气较凉，注意添衣保暖，预防感冒';
+    } else {
+        // 舒适天气
+        tipClass = 'normal';
+        tipIcon = '✨';
+        tipText = '天气舒适，适合外出活动，祝您有美好的一天';
+    }
+    
+    // 更新提示样式和内容
+    tipEl.className = 'weather-tip ' + tipClass;
+    iconEl.textContent = tipIcon;
+    textEl.textContent = tipText;
 }
 
 // ==================== 主题切换 ====================
