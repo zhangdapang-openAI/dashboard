@@ -1013,47 +1013,42 @@
         <main class="content">
             <!-- 顶部卡片栏 -->
             <div class="top-cards">
-                <!-- 天气卡片 -->
-                <div class="card weather-card">
+                <!-- 天气+日期合并卡片 -->
+                <div class="card weather-card" style="flex: 2;">
                     <div class="card-header">
-                        <span class="card-title">今日天气</span>
-                        <div class="card-icon">☀️</div>
+                        <span class="card-title">杭州 · 今日</span>
+                        <div class="card-icon" id="weatherIcon">☀️</div>
                     </div>
-                    <div class="weather-info">
-                        <span class="weather-temp" id="weatherTemp">--°</span>
-                        <div class="weather-details">
-                            <span class="weather-city">杭州</span>
-                            <span class="weather-status" id="weatherStatus">加载中...</span>
+                    <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+                        <div class="weather-info" style="flex: 1;">
+                            <span class="weather-temp" id="weatherTemp">--°</span>
+                            <div class="weather-details">
+                                <span class="weather-status" id="weatherStatus">加载中...</span>
+                                <span class="card-desc" id="weatherDetail" style="margin-top: 4px;">--</span>
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding-left: 24px; border-left: 1px solid var(--border);">
+                            <div style="font-size: 32px; font-weight: 700;" id="currentDate">--</div>
+                            <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;" id="currentWeekday">--</div>
                         </div>
                     </div>
-                    <div class="card-desc" id="weatherDetail">--</div>
                 </div>
 
-                <!-- 待办统计卡片 -->
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">待办事项</span>
-                        <div class="card-icon" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2);">📋</div>
+                <!-- 待办统计卡片（缩小版） -->
+                <div class="card" style="flex: 1; min-width: 200px;">
+                    <div class="card-header" style="margin-bottom: 12px;">
+                        <span class="card-title">待办</span>
+                        <div class="card-icon" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2); width: 36px; height: 36px; font-size: 18px;">📋</div>
                     </div>
-                    <div class="card-content">
-                        <span class="card-value" id="todoTotal">0</span>
-                        <span class="card-unit">个任务</span>
+                    <div class="card-content" style="margin-bottom: 8px;">
+                        <span class="card-value" id="todoTotal" style="font-size: 32px;">0</span>
+                        <span class="card-unit" style="font-size: 14px;">个</span>
                     </div>
-                    <div class="card-desc">
-                        已完成 <span id="todoCompleted" style="color: var(--accent-green);">0</span> / 剩余 <span id="todoRemaining" style="color: var(--accent-cyan);">0</span>
+                    <div class="card-desc" style="font-size: 12px;">
+                        <span style="color: var(--accent-green);">✓ <span id="todoCompleted">0</span></span>
+                        <span style="margin: 0 8px; color: var(--text-muted);">|</span>
+                        <span style="color: var(--accent-cyan);">○ <span id="todoRemaining">0</span></span>
                     </div>
-                </div>
-
-                <!-- 日期卡片 -->
-                <div class="card" onclick="openTool('calendar')" style="cursor: pointer;">
-                    <div class="card-header">
-                        <span class="card-title">今日日期</span>
-                        <div class="card-icon" style="background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.2);">📅</div>
-                    </div>
-                    <div class="card-content">
-                        <span class="card-value" id="currentDate">--</span>
-                    </div>
-                    <div class="card-desc" id="currentWeekday">--</div>
                 </div>
             </div>
 

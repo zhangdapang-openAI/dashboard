@@ -101,7 +101,7 @@ const App = {
                 document.getElementById('weatherDetail').textContent = `湿度 ${humidity} · ${wind}`;
                 
                 const icon = this.getWeatherIcon(condition);
-                document.querySelector('.weather-card .card-icon').textContent = icon;
+                document.getElementById('weatherIcon').textContent = icon;
             } else {
                 throw new Error('Invalid weather data');
             }
