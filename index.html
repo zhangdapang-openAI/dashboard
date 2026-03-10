@@ -699,6 +699,30 @@
             color: var(--text-muted);
         }
 
+        /* 城市选择器 */
+        .city-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .city-select:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-cyan);
+        }
+
+        .city-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 8px;
+        }
+
         /* 优先级选择器 */
         .priority-selector {
             display: flex;
@@ -1016,7 +1040,19 @@
                 <!-- 天气+日期合并卡片 -->
                 <div class="card weather-card" style="flex: 2;">
                     <div class="card-header">
-                        <span class="card-title">杭州 · 今日</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="card-title" id="weatherCityTitle">杭州</span>
+                            <span style="color: var(--text-muted);">·</span>
+                            <span class="card-title">今日</span>
+                            <select class="city-select" id="citySelect" onchange="changeCity(this.value)" title="切换城市">
+                                <option value="101210101">杭州</option>
+                                <option value="101030100">天津</option>
+                                <option value="101180101">郑州</option>
+                                <option value="101020100">上海</option>
+                                <option value="101010100">北京</option>
+                                <option value="auto">📍 自动定位</option>
+                            </select>
+                        </div>
                         <div class="card-icon" id="weatherIcon">☀️</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
@@ -1034,20 +1070,24 @@
                     </div>
                 </div>
 
-                <!-- 待办统计卡片（缩小版） -->
-                <div class="card" style="flex: 1; min-width: 200px;">
-                    <div class="card-header" style="margin-bottom: 12px;">
-                        <span class="card-title">待办</span>
+                <!-- 待办统计卡片 -->
+                <div class="card" style="flex: 1; min-width: 200px; position: relative;">
+                    <div class="card-header" style="margin-bottom: 16px;">
+                        <span class="card-title">待办事项统计</span>
                         <div class="card-icon" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2); width: 36px; height: 36px; font-size: 18px;">📋</div>
                     </div>
-                    <div class="card-content" style="margin-bottom: 8px;">
-                        <span class="card-value" id="todoTotal" style="font-size: 32px;">0</span>
-                        <span class="card-unit" style="font-size: 14px;">个</span>
+                    <div style="display: flex; gap: 20px; margin-bottom: 8px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 4px;">已完成</div>
+                            <div style="font-size: 36px; font-weight: 700; color: var(--accent-green);">✓ <span id="todoCompleted">0</span></div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 4px;">未完成</div>
+                            <div style="font-size: 36px; font-weight: 700; color: var(--accent-cyan);">○ <span id="todoRemaining">0</span></div>
+                        </div>
                     </div>
-                    <div class="card-desc" style="font-size: 12px;">
-                        <span style="color: var(--accent-green);">✓ <span id="todoCompleted">0</span></span>
-                        <span style="margin: 0 8px; color: var(--text-muted);">|</span>
-                        <span style="color: var(--accent-cyan);">○ <span id="todoRemaining">0</span></span>
+                    <div style="position: absolute; bottom: 16px; right: 16px; font-size: 12px; color: var(--text-muted);">
+                        总计: <span id="todoTotal" style="font-weight: 600; color: var(--text-primary);">0</span>
                     </div>
                 </div>
             </div>

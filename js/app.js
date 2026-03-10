@@ -25,6 +25,19 @@ const App = {
         expression: '',
         result: '0'
     },
+    currentCity: {
+        code: '101210101',
+        name: '杭州'
+    },
+
+    // 城市代码映射
+    cityMap: {
+        '101210101': '杭州',
+        '101030100': '天津',
+        '101180101': '郑州',
+        '101020100': '上海',
+        '101010100': '北京'
+    },
 
     // 初始化
     init() {
@@ -75,7 +88,7 @@ const App = {
         try {
             // 和风天气API配置
             const key = '0c8b926f5c9d477c83cb0e9fe7afbce3';
-            const location = '101210101'; // 杭州城市代码
+            const location = this.currentCity.code;
             
             // 使用 Promise.race 添加5秒超时
             const response = await Promise.race([
@@ -776,6 +789,115 @@ function closeTool() {
     App.closeTool();
 }
 
+// ==================== 城市切换 ====================
+
+function changeCity(cityCode) {
+    if (cityCode === 'auto') {
+        // 自动定位
+        autoLocate();
+    } else {
+        // 手动选择城市
+        App.currentCity.code = cityCode;
+        App.currentCity.name = App.cityMap[cityCode] || '未知';
+        updateWeatherDisplay();
+        // 保存选择
+        localStorage.setItem('dashboard_city', cityCode);
+    }
+}
+
+function autoLocate() {
+    if (!navigator.geolocation) {
+        alert('您的浏览器不支持地理定位');
+        document.getElementById('citySelect').value = App.currentCity.code;
+        return;
+    }
+    
+    document.getElementById('weatherCityTitle').textContent = '定位中...';
+    document.getElementById('weatherStatus').textContent = '获取位置...';
+    
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            // 定位成功，使用经纬度查询天气
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            fetchWeatherByCoords(lat, lon);
+        },
+        (error) => {
+            // 定位失败
+            console.error('定位失败:', error);
+            alert('定位失败，请手动选择城市');
+            document.getElementById('citySelect').value = App.currentCity.code;
+            document.getElementById('weatherCityTitle').textContent = App.currentCity.name;
+            App.fetchWeather();
+        },
+        {
+            timeout: 10000,
+            enableHighAccuracy: false
+        }
+    );
+}
+
+async function fetchWeatherByCoords(lat, lon) {
+    try {
+        const key = '0c8b926f5c9d477c83cb0e9fe7afbce3';
+        // 使用经纬度查询天气
+        const response = await Promise.race([
+            fetch(`https://mu44uanw8g.re.qweatherapi.com/v7/weather/now?location=${lon},${lat}&key=${key}`),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Weather timeout')), 5000)
+            )
+        ]);
+        
+        if (!response.ok) throw new Error('Weather fetch failed');
+        
+        const data = await response.json();
+        
+        if (data.code === '200' && data.now) {
+            const now = data.now;
+            App.currentCity.name = '本地';
+            App.currentCity.code = 'auto';
+            
+            document.getElementById('weatherCityTitle').textContent = '本地';
+            document.getElementById('weatherTemp').textContent = now.temp + '°';
+            document.getElementById('weatherStatus').textContent = now.text;
+            document.getElementById('weatherDetail').textContent = `湿度 ${now.humidity}% · ${now.windDir} ${now.windScale}级`;
+            
+            const icon = App.getWeatherIcon(now.text);
+            document.getElementById('weatherIcon').textContent = icon;
+            
+            localStorage.setItem('dashboard_city', 'auto');
+        } else {
+            throw new Error('Invalid weather data');
+        }
+    } catch (error) {
+        console.error('Weather fetch error:', error);
+        alert('获取天气失败，请手动选择城市');
+        document.getElementById('citySelect').value = '101210101';
+        changeCity('101210101');
+    }
+}
+
+function updateWeatherDisplay() {
+    document.getElementById('weatherCityTitle').textContent = App.currentCity.name;
+    App.fetchWeather();
+}
+
+// 加载保存的城市
+function loadCity() {
+    const savedCity = localStorage.getItem('dashboard_city');
+    if (savedCity) {
+        if (savedCity === 'auto') {
+            // 上次是自动定位，尝试重新定位
+            autoLocate();
+        } else {
+            document.getElementById('citySelect').value = savedCity;
+            App.currentCity.code = savedCity;
+            App.currentCity.name = App.cityMap[savedCity] || '杭州';
+            document.getElementById('weatherCityTitle').textContent = App.currentCity.name;
+        }
+    }
+}
+
 // ==================== 主题切换 ====================
 
 function toggleThemePanel() {
@@ -828,6 +950,7 @@ document.addEventListener('click', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
     loadTheme();
+    loadCity();
 });
 
 // 每分钟刷新日期
