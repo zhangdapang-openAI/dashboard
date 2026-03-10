@@ -14,6 +14,7 @@
             box-sizing: border-box;
         }
 
+        /* 主题1: 深邃科技 (默认) */
         :root {
             --bg-primary: #0a0a0f;
             --bg-secondary: #12121a;
@@ -29,6 +30,78 @@
             --accent-red: #ef4444;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.15);
+        }
+
+        /* 主题2: 清新海洋 */
+        [data-theme="ocean"] {
+            --bg-primary: #0c1a2d;
+            --bg-secondary: #0f2744;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --border: rgba(100, 200, 255, 0.15);
+            --text-primary: #e0f7ff;
+            --text-secondary: rgba(176, 216, 255, 0.7);
+            --text-muted: rgba(150, 200, 255, 0.5);
+            --accent-cyan: #4fc3f7;
+            --accent-gold: #ffcc80;
+            --accent-purple: #ce93d8;
+            --accent-green: #81c784;
+            --accent-red: #ef5350;
+            --shadow: 0 8px 32px rgba(0, 100, 200, 0.3);
+            --shadow-glow: 0 0 40px rgba(79, 195, 247, 0.25);
+        }
+
+        /* 主题3: 暗夜紫韵 */
+        [data-theme="purple"] {
+            --bg-primary: #1a0a2e;
+            --bg-secondary: #2d1b4e;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --border: rgba(180, 120, 255, 0.12);
+            --text-primary: #f3e5f5;
+            --text-secondary: rgba(225, 190, 255, 0.7);
+            --text-muted: rgba(200, 160, 255, 0.5);
+            --accent-cyan: #e040fb;
+            --accent-gold: #ffd54f;
+            --accent-purple: #b39ddb;
+            --accent-green: #69f0ae;
+            --accent-red: #ff8a80;
+            --shadow: 0 8px 32px rgba(100, 50, 200, 0.35);
+            --shadow-glow: 0 0 40px rgba(224, 64, 251, 0.2);
+        }
+
+        /* 主题4: 暖阳金橙 */
+        [data-theme="sunset"] {
+            --bg-primary: #1a1209;
+            --bg-secondary: #2d1f14;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 180, 100, 0.15);
+            --text-primary: #fff3e0;
+            --text-secondary: rgba(255, 220, 180, 0.7);
+            --text-muted: rgba(255, 200, 150, 0.5);
+            --accent-cyan: #ffab40;
+            --accent-gold: #ffd54f;
+            --accent-purple: #ff80ab;
+            --accent-green: #b2ff59;
+            --accent-red: #ff5252;
+            --shadow: 0 8px 32px rgba(200, 100, 50, 0.3);
+            --shadow-glow: 0 0 40px rgba(255, 171, 64, 0.2);
+        }
+
+        /* 主题5: 森林墨绿 */
+        [data-theme="forest"] {
+            --bg-primary: #0d1f0d;
+            --bg-secondary: #1a331a;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --border: rgba(100, 200, 100, 0.15);
+            --text-primary: #e8f5e9;
+            --text-secondary: rgba(180, 230, 180, 0.7);
+            --text-muted: rgba(150, 210, 150, 0.5);
+            --accent-cyan: #69f0ae;
+            --accent-gold: #fff59d;
+            --accent-purple: #ce93d8;
+            --accent-green: #a5d6a7;
+            --accent-red: #ff8a80;
+            --shadow: 0 8px 32px rgba(50, 150, 50, 0.3);
+            --shadow-glow: 0 0 40px rgba(105, 240, 174, 0.2);
         }
 
         * {
@@ -129,6 +202,87 @@
             background: rgba(255, 255, 255, 0.08);
             border-color: var(--accent-cyan);
             color: var(--accent-cyan);
+        }
+
+        /* 主题切换面板 */
+        .theme-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            z-index: 1001;
+            box-shadow: var(--shadow);
+            display: none;
+            min-width: 200px;
+        }
+
+        .theme-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .theme-panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .theme-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .theme-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .theme-preview.tech { background: linear-gradient(135deg, #0a0a0f, #12121a); }
+        .theme-preview.ocean { background: linear-gradient(135deg, #0c1a2d, #0f2744); }
+        .theme-preview.purple { background: linear-gradient(135deg, #1a0a2e, #2d1b4e); }
+        .theme-preview.sunset { background: linear-gradient(135deg, #1a1209, #2d1f14); }
+        .theme-preview.forest { background: linear-gradient(135deg, #0d1f0d, #1a331a); }
+
+        .theme-name {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .theme-option.active .theme-name {
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         /* 主布局 */
@@ -788,15 +942,42 @@
     <header class="header">
         <div class="logo">
             <div class="logo-icon">⚡</div>
-            <span>大胖的仪表盘</span>
+            <span>我的仪表盘</span>
         </div>
         <div class="header-actions">
             <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
             <button class="header-btn" onclick="refreshWeather()">🔄</button>
-            <button class="header-btn">⚙️</button>
+            <button class="header-btn" onclick="toggleThemePanel()">🎨</button>
             <button class="header-btn">👤</button>
         </div>
     </header>
+
+    <!-- 主题切换面板 -->
+    <div class="theme-panel" id="themePanel">
+        <div class="theme-panel-title">选择主题</div>
+        <div class="theme-options">
+            <div class="theme-option active" data-theme="" onclick="setTheme('')">
+                <div class="theme-preview tech"></div>
+                <span class="theme-name">深邃科技</span>
+            </div>
+            <div class="theme-option" data-theme="ocean" onclick="setTheme('ocean')">
+                <div class="theme-preview ocean"></div>
+                <span class="theme-name">清新海洋</span>
+            </div>
+            <div class="theme-option" data-theme="purple" onclick="setTheme('purple')">
+                <div class="theme-preview purple"></div>
+                <span class="theme-name">暗夜紫韵</span>
+            </div>
+            <div class="theme-option" data-theme="sunset" onclick="setTheme('sunset')">
+                <div class="theme-preview sunset"></div>
+                <span class="theme-name">暖阳金橙</span>
+            </div>
+            <div class="theme-option" data-theme="forest" onclick="setTheme('forest')">
+                <div class="theme-preview forest"></div>
+                <span class="theme-name">森林墨绿</span>
+            </div>
+        </div>
+    </div>
 
     <!-- 主布局 -->
     <div class="main-layout">

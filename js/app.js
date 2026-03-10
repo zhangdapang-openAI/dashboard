@@ -776,10 +776,58 @@ function closeTool() {
     App.closeTool();
 }
 
+// ==================== 主题切换 ====================
+
+function toggleThemePanel() {
+    document.getElementById('themePanel').classList.toggle('active');
+}
+
+function setTheme(theme) {
+    // 设置主题
+    if (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+    
+    // 保存到localStorage
+    localStorage.setItem('dashboard_theme', theme);
+    
+    // 更新选中状态
+    document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+            option.classList.add('active');
+        }
+    });
+    
+    // 关闭面板
+    document.getElementById('themePanel').classList.remove('active');
+}
+
+// 加载保存的主题
+function loadTheme() {
+    const savedTheme = localStorage.getItem('dashboard_theme');
+    if (savedTheme) {
+        setTheme(savedTheme);
+    }
+}
+
+// 点击面板外部关闭
+document.addEventListener('click', (e) => {
+    const panel = document.getElementById('themePanel');
+    const btn = document.querySelector('.header-btn[onclick="toggleThemePanel()"]');
+    
+    if (panel && !panel.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+        panel.classList.remove('active');
+    }
+});
+
 // ==================== 初始化 ====================
 
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
+    loadTheme();
 });
 
 // 每分钟刷新日期
