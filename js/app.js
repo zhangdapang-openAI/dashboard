@@ -1,7 +1,7 @@
 /**
  * 我的仪表盘
  * 小胖出品，必属精品
- * 版本：v1.0.3
+ * 版本：v1.0.4
  */
 
 // ==================== 应用主对象 ====================
@@ -166,16 +166,55 @@ const App = {
             return priorityOrder[a.priority] - priorityOrder[b.priority];
         });
         
-        listEl.innerHTML = sortedTodos.map(todo => `
-            <div class="todo-item" data-id="${todo.id}">
-                <div class="todo-checkbox ${todo.done ? 'checked' : ''}" onclick="App.toggleTodo('${todo.id}')">
-                    ${todo.done ? '✓' : ''}
+        listEl.innerHTML = sortedTodos.map(todo => this.renderTodoItem(todo)).join('');
+    },
+
+    renderTodoItem(todo) {
+        const subtaskCount = todo.subtasks ? todo.subtasks.length : 0;
+        const completedSubtasks = todo.subtasks ? todo.subtasks.filter(s => s.done).length : 0;
+        const hasSubtasks = subtaskCount > 0;
+        
+        let subtasksHtml = '';
+        if (todo.expanded) {
+            subtasksHtml = `
+                <div class="subtask-list">
+                    <div class="subtask-list-header">📋 子任务 (${completedSubtasks}/${subtaskCount})</div>
+                    ${hasSubtasks ? todo.subtasks.map(sub => `
+                        <div class="subtask-item ${sub.done ? 'done' : ''}">
+                            <div class="subtask-checkbox ${sub.done ? 'checked' : ''}" 
+                                 onclick="App.toggleSubtask('${todo.id}', '${sub.id}')">
+                                ${sub.done ? '✓' : ''}
+                            </div>
+                            <span class="subtask-text">${this.escapeHtml(sub.text)}</span>
+                            <button class="subtask-delete" onclick="App.deleteSubtask('${todo.id}', '${sub.id}')">×</button>
+                        </div>
+                    `).join('') : '<div style="color: var(--text-muted); font-size: 14px; padding: 8px 0;">暂无子任务</div>'}
+                    <div class="subtask-input-area">
+                        <input type="text" class="subtask-input" 
+                               placeholder="添加子任务..." 
+                               onkeypress="App.handleSubtaskEnter(event, '${todo.id}')"
+                               id="subtask-input-${todo.id}">
+                        <button class="btn-subtask-add" onclick="App.addSubtask('${todo.id}')">+</button>
+                    </div>
                 </div>
-                <span class="todo-text ${todo.done ? 'completed' : ''}">${this.escapeHtml(todo.text)}</span>
-                <span class="todo-priority priority-${todo.priority}">${this.getPriorityLabel(todo.priority)}</span>
-                <button class="todo-delete" onclick="App.deleteTodo('${todo.id}')">🗑️</button>
+            `;
+        }
+        
+        return `
+            <div class="todo-item ${todo.done ? 'done' : ''}" data-id="${todo.id}">
+                <div class="todo-main">
+                    <div class="todo-checkbox ${todo.done ? 'checked' : ''}" onclick="App.toggleTodo('${todo.id}')">
+                        ${todo.done ? '✓' : ''}
+                    </div>
+                    <span class="todo-text ${todo.done ? 'completed' : ''}">${this.escapeHtml(todo.text)}</span>
+                    <span class="todo-priority priority-${todo.priority}">${this.getPriorityLabel(todo.priority)}</span>
+                    ${hasSubtasks ? `<span class="subtask-badge">${completedSubtasks}/${subtaskCount}</span>` : ''}
+                    <button class="todo-toggle" onclick="App.toggleSubtaskView('${todo.id}')">${todo.expanded ? '▼' : '▶'}</button>
+                    <button class="todo-delete" onclick="App.deleteTodo('${todo.id}')">🗑️</button>
+                </div>
+                ${subtasksHtml}
             </div>
-        `).join('');
+        `;
     },
 
     getPriorityLabel(priority) {
@@ -200,7 +239,9 @@ const App = {
             text: text,
             priority: priorityValue.value,
             done: false,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            subtasks: [],
+            expanded: false
         });
         
         this.saveData();
@@ -225,6 +266,74 @@ const App = {
         this.saveData();
         this.renderTodos();
         this.updateStats();
+    },
+
+    // 子任务功能
+    toggleSubtaskView(todoId) {
+        const todo = this.todos.find(t => t.id === todoId);
+        if (todo) {
+            todo.expanded = !todo.expanded;
+            this.saveData();
+            this.renderTodos();
+        }
+    },
+
+    addSubtask(todoId) {
+        const todo = this.todos.find(t => t.id === todoId);
+        if (!todo) return;
+        
+        const input = document.getElementById(`subtask-input-${todoId}`);
+        const text = input.value.trim();
+        
+        if (!text) return;
+        
+        if (!todo.subtasks) todo.subtasks = [];
+        
+        todo.subtasks.push({
+            id: Date.now().toString(),
+            text: text,
+            done: false
+        });
+        
+        this.saveData();
+        this.renderTodos();
+    },
+
+    handleSubtaskEnter(event, todoId) {
+        if (event.key === 'Enter') {
+            this.addSubtask(todoId);
+        }
+    },
+
+    toggleSubtask(todoId, subtaskId) {
+        const todo = this.todos.find(t => t.id === todoId);
+        if (!todo || !todo.subtasks) return;
+        
+        const subtask = todo.subtasks.find(s => s.id === subtaskId);
+        if (subtask) {
+            subtask.done = !subtask.done;
+            
+            // 检查是否所有子任务完成
+            const allDone = todo.subtasks.every(s => s.done);
+            if (allDone && !todo.done) {
+                todo.done = true;
+            } else if (!allDone && todo.done) {
+                todo.done = false;
+            }
+            
+            this.saveData();
+            this.renderTodos();
+            this.updateStats();
+        }
+    },
+
+    deleteSubtask(todoId, subtaskId) {
+        const todo = this.todos.find(t => t.id === todoId);
+        if (!todo || !todo.subtasks) return;
+        
+        todo.subtasks = todo.subtasks.filter(s => s.id !== subtaskId);
+        this.saveData();
+        this.renderTodos();
     },
 
     clearCompleted() {

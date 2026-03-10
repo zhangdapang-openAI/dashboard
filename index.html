@@ -32,25 +32,7 @@
             --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.15);
         }
 
-        /* 主题2: 清新海洋 */
-        [data-theme="ocean"] {
-            --bg-primary: #0c1a2d;
-            --bg-secondary: #0f2744;
-            --bg-card: rgba(255, 255, 255, 0.05);
-            --border: rgba(100, 200, 255, 0.15);
-            --text-primary: #e0f7ff;
-            --text-secondary: rgba(176, 216, 255, 0.7);
-            --text-muted: rgba(150, 200, 255, 0.5);
-            --accent-cyan: #4fc3f7;
-            --accent-gold: #ffcc80;
-            --accent-purple: #ce93d8;
-            --accent-green: #81c784;
-            --accent-red: #ef5350;
-            --shadow: 0 8px 32px rgba(0, 100, 200, 0.3);
-            --shadow-glow: 0 0 40px rgba(79, 195, 247, 0.25);
-        }
-
-        /* 主题3: 暗夜紫韵 */
+        /* 主题2: 暗夜紫韵 */
         [data-theme="purple"] {
             --bg-primary: #1a0a2e;
             --bg-secondary: #2d1b4e;
@@ -68,25 +50,7 @@
             --shadow-glow: 0 0 40px rgba(224, 64, 251, 0.2);
         }
 
-        /* 主题4: 暖阳金橙 */
-        [data-theme="sunset"] {
-            --bg-primary: #1a1209;
-            --bg-secondary: #2d1f14;
-            --bg-card: rgba(255, 255, 255, 0.04);
-            --border: rgba(255, 180, 100, 0.15);
-            --text-primary: #fff3e0;
-            --text-secondary: rgba(255, 220, 180, 0.7);
-            --text-muted: rgba(255, 200, 150, 0.5);
-            --accent-cyan: #ffab40;
-            --accent-gold: #ffd54f;
-            --accent-purple: #ff80ab;
-            --accent-green: #b2ff59;
-            --accent-red: #ff5252;
-            --shadow: 0 8px 32px rgba(200, 100, 50, 0.3);
-            --shadow-glow: 0 0 40px rgba(255, 171, 64, 0.2);
-        }
-
-        /* 主题5: 森林墨绿 */
+        /* 主题3: 森林墨绿 */
         [data-theme="forest"] {
             --bg-primary: #0d1f0d;
             --bg-secondary: #1a331a;
@@ -102,6 +66,60 @@
             --accent-red: #ff8a80;
             --shadow: 0 8px 32px rgba(50, 150, 50, 0.3);
             --shadow-glow: 0 0 40px rgba(105, 240, 174, 0.2);
+        }
+
+        /* 主题6: 樱花粉白（浅色） */
+        [data-theme="sakura"] {
+            --bg-primary: #fdf2f4;
+            --bg-secondary: #fce7eb;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --border: rgba(200, 100, 130, 0.25);
+            --text-primary: #2d1a20;
+            --text-secondary: rgba(45, 26, 32, 0.85);
+            --text-muted: rgba(45, 26, 32, 0.6);
+            --accent-cyan: #e91e63;
+            --accent-gold: #ff7043;
+            --accent-purple: #9c27b0;
+            --accent-green: #4caf50;
+            --accent-red: #f44336;
+            --shadow: 0 8px 32px rgba(200, 100, 130, 0.25);
+            --shadow-glow: 0 0 40px rgba(233, 30, 99, 0.2);
+        }
+
+        /* 主题7: 天空蓝白（浅色） */
+        [data-theme="sky"] {
+            --bg-primary: #f0f8ff;
+            --bg-secondary: #e6f3ff;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --border: rgba(100, 150, 200, 0.3);
+            --text-primary: #0d2137;
+            --text-secondary: rgba(13, 33, 55, 0.85);
+            --text-muted: rgba(13, 33, 55, 0.6);
+            --accent-cyan: #1976d2;
+            --accent-gold: #f57c00;
+            --accent-purple: #7b1fa2;
+            --accent-green: #388e3c;
+            --accent-red: #d32f2f;
+            --shadow: 0 8px 32px rgba(100, 150, 200, 0.25);
+            --shadow-glow: 0 0 40px rgba(25, 118, 210, 0.2);
+        }
+
+        /* 主题8: 薄荷奶绿（浅色） */
+        [data-theme="mint"] {
+            --bg-primary: #f0fdf4;
+            --bg-secondary: #dcfce7;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --border: rgba(100, 180, 130, 0.3);
+            --text-primary: #0d3320;
+            --text-secondary: rgba(13, 51, 32, 0.85);
+            --text-muted: rgba(13, 51, 32, 0.6);
+            --accent-cyan: #2e7d32;
+            --accent-gold: #f57f17;
+            --accent-purple: #6a1b9a;
+            --accent-green: #1b5e20;
+            --accent-red: #c62828;
+            --shadow: 0 8px 32px rgba(100, 180, 130, 0.25);
+            --shadow-glow: 0 0 40px rgba(46, 125, 50, 0.2);
         }
 
         * {
@@ -270,18 +288,20 @@
         }
 
         .theme-preview.tech { background: linear-gradient(135deg, #0a0a0f, #12121a); }
-        .theme-preview.ocean { background: linear-gradient(135deg, #0c1a2d, #0f2744); }
         .theme-preview.purple { background: linear-gradient(135deg, #1a0a2e, #2d1b4e); }
-        .theme-preview.sunset { background: linear-gradient(135deg, #1a1209, #2d1f14); }
         .theme-preview.forest { background: linear-gradient(135deg, #0d1f0d, #1a331a); }
+        .theme-preview.sakura { background: linear-gradient(135deg, #fdf2f4, #fce7eb); border-color: rgba(200, 100, 130, 0.5); }
+        .theme-preview.sky { background: linear-gradient(135deg, #f0f8ff, #e6f3ff); border-color: rgba(100, 150, 200, 0.5); }
+        .theme-preview.mint { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: rgba(100, 180, 130, 0.5); }
 
         .theme-name {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .theme-option.active .theme-name {
-            color: var(--text-primary);
+            color: #ffffff;
             font-weight: 500;
         }
 
@@ -669,6 +689,187 @@
             color: var(--accent-red);
         }
 
+        /* 子任务样式 */
+        .todo-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .todo-item.done {
+            opacity: 0.7;
+        }
+
+        .subtask-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+            color: var(--accent-cyan);
+        }
+
+        .todo-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+
+        .todo-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .subtask-list {
+            margin-top: 12px;
+            margin-left: 48px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.1);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 0 12px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .subtask-list-header {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .subtask-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .subtask-item.done {
+            opacity: 0.6;
+        }
+
+        .subtask-item.done .subtask-text {
+            color: var(--text-muted);
+            text-decoration: line-through;
+        }
+
+        .subtask-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .subtask-checkbox:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .subtask-checkbox.checked {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        .subtask-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .subtask-delete {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            opacity: 0;
+            font-size: 16px;
+        }
+
+        .subtask-item:hover .subtask-delete {
+            opacity: 1;
+        }
+
+        .subtask-delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .subtask-input-area {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .subtask-input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .subtask-input:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-subtask-add {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--accent-cyan);
+            border: none;
+            color: var(--bg-primary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .btn-subtask-add:hover {
+            transform: scale(1.05);
+        }
+
         /* 添加待办输入 */
         .todo-input-area {
             display: flex;
@@ -1032,21 +1233,25 @@
                 <div class="theme-preview tech"></div>
                 <span class="theme-name">深邃科技</span>
             </div>
-            <div class="theme-option" data-theme="ocean" onclick="setTheme('ocean')">
-                <div class="theme-preview ocean"></div>
-                <span class="theme-name">清新海洋</span>
-            </div>
             <div class="theme-option" data-theme="purple" onclick="setTheme('purple')">
                 <div class="theme-preview purple"></div>
                 <span class="theme-name">暗夜紫韵</span>
             </div>
-            <div class="theme-option" data-theme="sunset" onclick="setTheme('sunset')">
-                <div class="theme-preview sunset"></div>
-                <span class="theme-name">暖阳金橙</span>
-            </div>
             <div class="theme-option" data-theme="forest" onclick="setTheme('forest')">
                 <div class="theme-preview forest"></div>
                 <span class="theme-name">森林墨绿</span>
+            </div>
+            <div class="theme-option" data-theme="sakura" onclick="setTheme('sakura')">
+                <div class="theme-preview sakura"></div>
+                <span class="theme-name">樱花粉白</span>
+            </div>
+            <div class="theme-option" data-theme="sky" onclick="setTheme('sky')">
+                <div class="theme-preview sky"></div>
+                <span class="theme-name">天空蓝白</span>
+            </div>
+            <div class="theme-option" data-theme="mint" onclick="setTheme('mint')">
+                <div class="theme-preview mint"></div>
+                <span class="theme-name">薄荷奶绿</span>
             </div>
         </div>
     </div>
