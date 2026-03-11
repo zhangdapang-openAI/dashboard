@@ -362,6 +362,26 @@
             border: 1px solid rgba(0, 212, 255, 0.3);
             color: var(--accent-cyan);
         }
+        /* 游戏链接样式 */
+        .game-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .game-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
 
         .nav-icon {
             width: 24px;
@@ -1285,7 +1305,14 @@
                     <span class="nav-icon">⚫</span>
                     <span>张谷五子棋</span>
                 </div>
-                <div class="nav-item" onclick="window.open('https://zhangdapang-openai.github.io/tetris-game/','_blank')">                    <span class="nav-icon">🎮</span>                    <span>机甲俄罗斯方块</span>                </div>
+                <div class="nav-item" onclick="window.open('https://zhangdapang-openai.github.io/tetris-game/','_blank')">
+                    <span class="nav-icon">🎮</span>
+                    <span>机甲俄罗斯方块</span>
+                </div>
+                <div class="nav-item" onclick="window.open('https://zhangdapang-openai.github.io/stranger-things-game/','_blank')">
+                    <span class="nav-icon">🎬</span>
+                    <span>怪奇物语：霍金斯的秘密</span>
+                </div>
             </div>
             </div>
         </aside>
