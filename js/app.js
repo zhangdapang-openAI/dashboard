@@ -11,10 +11,18 @@ const App = {
     notes: [],
     pomodoro: {
         timeLeft: 25 * 60,
+        workDuration: 25,  // 专注时长（分钟）
+        shortBreak: 5,     // 短休息（分钟）
+        longBreak: 15,     // 长休息（分钟）
         isRunning: false,
         isBreak: false,
+        isPaused: false,
         completed: 0,
-        timer: null
+        totalFocusTime: 0, // 今日专注总时长（秒）
+        timer: null,
+        currentTask: '',   // 当前任务标签
+        sessionCount: 0,   // 当前轮次计数
+        audioContext: null // 音频上下文
     },
     countdown: {
         timeLeft: 0,
@@ -59,6 +67,20 @@ const App = {
             this.todos = data.todos || [];
             this.notes = data.notes || [];
             this.pomodoro.completed = data.pomodoroCompleted || 0;
+            this.pomodoro.totalFocusTime = data.totalFocusTime || 0;
+            this.pomodoro.sessionCount = data.sessionCount || 0;
+            this.pomodoro.workDuration = data.workDuration || 25;
+            this.pomodoro.shortBreak = data.shortBreak || 5;
+            this.pomodoro.longBreak = data.longBreak || 15;
+            
+            // 检查是否是新的一天，重置每日统计
+            const lastUpdate = data.lastUpdate ? new Date(data.lastUpdate) : null;
+            const today = new Date();
+            if (lastUpdate && lastUpdate.toDateString() !== today.toDateString()) {
+                // 新的一天，重置每日统计
+                this.pomodoro.totalFocusTime = 0;
+                this.pomodoro.sessionCount = 0;
+            }
         }
     },
 
@@ -68,6 +90,11 @@ const App = {
             todos: this.todos,
             notes: this.notes,
             pomodoroCompleted: this.pomodoro.completed,
+            totalFocusTime: this.pomodoro.totalFocusTime,
+            sessionCount: this.pomodoro.sessionCount,
+            workDuration: this.pomodoro.workDuration,
+            shortBreak: this.pomodoro.shortBreak,
+            longBreak: this.pomodoro.longBreak,
             lastUpdate: new Date().toISOString()
         };
         localStorage.setItem('dashboard_data', JSON.stringify(data));
@@ -417,27 +444,85 @@ const App = {
 
     // ==================== 番茄钟 ====================
     getPomodoroHTML() {
+        const todayFocus = Math.floor(this.pomodoro.totalFocusTime / 60);
         return `
-            <div class="pomodoro-display">
-                <div class="pomodoro-time" id="pomoTime">25:00</div>
-                <div class="pomodoro-status" id="pomoStatus">准备专注</div>
-            </div>
-            <div class="pomodoro-controls">
-                <button class="pomodoro-btn primary" id="pomoStart" onclick="App.startPomodoro()">开始专注</button>
-                <button class="pomodoro-btn secondary" onclick="App.resetPomodoro()">重置</button>
-            </div>
-            <div class="pomodoro-stats">
-                <div class="pomodoro-stat">
-                    <div class="pomodoro-stat-value" id="pomoCompleted">${this.pomodoro.completed}</div>
-                    <div class="pomodoro-stat-label">完成次数</div>
+            <div class="pomodoro-container">
+                <!-- 进度环 -->
+                <div class="pomodoro-ring-container">
+                    <svg class="pomodoro-ring" viewBox="0 0 200 200">
+                        <circle class="pomodoro-ring-bg" cx="100" cy="100" r="90"/>
+                        <circle class="pomodoro-ring-progress" id="pomoRing" cx="100" cy="100" r="90"/>
+                    </svg>
+                    <div class="pomodoro-center">
+                        <div class="pomodoro-time" id="pomoTime">25:00</div>
+                        <div class="pomodoro-status" id="pomoStatus">准备专注</div>
+                    </div>
                 </div>
-                <div class="pomodoro-stat">
-                    <div class="pomodoro-stat-value">25</div>
-                    <div class="pomodoro-stat-label">专注分钟</div>
+                
+                <!-- 任务标签 -->
+                <div class="pomodoro-task">
+                    <input type="text" id="pomoTask" placeholder="正在专注..." 
+                           value="${this.pomodoro.currentTask}"
+                           oninput="App.pomodoro.currentTask = this.value">
                 </div>
-                <div class="pomodoro-stat">
-                    <div class="pomodoro-stat-value">5</div>
-                    <div class="pomodoro-stat-label">休息分钟</div>
+                
+                <!-- 控制按钮 -->
+                <div class="pomodoro-controls">
+                    <button class="pomodoro-btn secondary" onclick="App.skipPomodoro()" title="跳过">⏭️</button>
+                    <button class="pomodoro-btn primary" id="pomoStart" onclick="App.startPomodoro()">开始专注</button>
+                    <button class="pomodoro-btn secondary" onclick="App.resetPomodoro()" title="重置">🔄</button>
+                </div>
+                
+                <!-- 时间设置 -->
+                <div class="pomodoro-settings">
+                    <div class="pomodoro-setting-item">
+                        <label>专注</label>
+                        <div class="pomodoro-setting-control">
+                            <button onclick="App.adjustTime('work', -5)">−</button>
+                            <span id="pomoWorkTime">${this.pomodoro.workDuration}</span>
+                            <button onclick="App.adjustTime('work', 5)">+</button>
+                        </div>
+                        <span>分钟</span>
+                    </div>
+                    <div class="pomodoro-setting-item">
+                        <label>短休息</label>
+                        <div class="pomodoro-setting-control">
+                            <button onclick="App.adjustTime('shortBreak', -1)">−</button>
+                            <span id="pomoShortBreak">${this.pomodoro.shortBreak}</span>
+                            <button onclick="App.adjustTime('shortBreak', 1)">+</button>
+                        </div>
+                        <span>分钟</span>
+                    </div>
+                    <div class="pomodoro-setting-item">
+                        <label>长休息</label>
+                        <div class="pomodoro-setting-control">
+                            <button onclick="App.adjustTime('longBreak', -5)">−</button>
+                            <span id="pomoLongBreak">${this.pomodoro.longBreak}</span>
+                            <button onclick="App.adjustTime('longBreak', 5)">+</button>
+                        </div>
+                        <span>分钟</span>
+                    </div>
+                </div>
+                
+                <!-- 今日统计 -->
+                <div class="pomodoro-stats">
+                    <div class="pomodoro-stat">
+                        <div class="pomodoro-stat-value" id="pomoCompleted">${this.pomodoro.completed}</div>
+                        <div class="pomodoro-stat-label">完成番茄</div>
+                    </div>
+                    <div class="pomodoro-stat">
+                        <div class="pomodoro-stat-value" id="pomoTotalFocus">${todayFocus}</div>
+                        <div class="pomodoro-stat-label">专注分钟</div>
+                    </div>
+                    <div class="pomodoro-stat">
+                        <div class="pomodoro-stat-value" id="pomoSession">${this.pomodoro.sessionCount}/4</div>
+                        <div class="pomodoro-stat-label">当前轮次</div>
+                    </div>
+                </div>
+                
+                <!-- 提示 -->
+                <div class="pomodoro-tip" id="pomoTip">
+                    💡 每4个番茄后享受一次长休息
                 </div>
             </div>
         `;
@@ -445,6 +530,7 @@ const App = {
 
     initPomodoro() {
         this.updatePomodoroDisplay();
+        this.updatePomodoroRing();
     },
 
     updatePomodoroDisplay() {
@@ -452,6 +538,83 @@ const App = {
         const seconds = this.pomodoro.timeLeft % 60;
         document.getElementById('pomoTime').textContent = 
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        this.updatePomodoroRing();
+    },
+
+    updatePomodoroRing() {
+        const ring = document.getElementById('pomoRing');
+        if (!ring) return;
+        
+        const totalTime = this.pomodoro.isBreak 
+            ? (this.pomodoro.sessionCount >= 4 ? this.pomodoro.longBreak : this.pomodoro.shortBreak) * 60
+            : this.pomodoro.workDuration * 60;
+        const progress = this.pomodoro.timeLeft / totalTime;
+        const circumference = 2 * Math.PI * 90;
+        const offset = circumference * (1 - progress);
+        
+        ring.style.strokeDasharray = circumference;
+        ring.style.strokeDashoffset = offset;
+        
+        // 根据状态改变颜色
+        if (this.pomodoro.isBreak) {
+            ring.classList.add('break-mode');
+        } else {
+            ring.classList.remove('break-mode');
+        }
+    },
+
+    adjustTime(type, delta) {
+        if (this.pomodoro.isRunning) return; // 运行中不允许调整
+        
+        const min = type === 'work' ? 5 : 1;
+        const max = type === 'work' ? 60 : 30;
+        
+        this.pomodoro[type] = Math.max(min, Math.min(max, this.pomodoro[type] + delta));
+        
+        // 更新显示
+        const idMap = { work: 'pomoWorkTime', shortBreak: 'pomoShortBreak', longBreak: 'pomoLongBreak' };
+        document.getElementById(idMap[type]).textContent = this.pomodoro[type];
+        
+        // 如果调整的是专注时间，更新倒计时
+        if (type === 'work' && !this.pomodoro.isBreak) {
+            this.pomodoro.timeLeft = this.pomodoro.workDuration * 60;
+            this.updatePomodoroDisplay();
+        }
+    },
+
+    playSound(type) {
+        try {
+            if (!this.pomodoro.audioContext) {
+                this.pomodoro.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const ctx = this.pomodoro.audioContext;
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            if (type === 'complete') {
+                // 完成音效 - 上升音调
+                oscillator.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                oscillator.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+                oscillator.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+                gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.5);
+            } else if (type === 'tick') {
+                // 滴答声
+                oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.05);
+            }
+        } catch (e) {
+            console.log('Audio not supported');
+        }
     },
 
     startPomodoro() {
@@ -459,17 +622,38 @@ const App = {
             // 暂停
             clearInterval(this.pomodoro.timer);
             this.pomodoro.isRunning = false;
-            document.getElementById('pomoStart').textContent = '继续专注';
+            this.pomodoro.isPaused = true;
+            document.getElementById('pomoStart').textContent = '继续';
             document.getElementById('pomoStatus').textContent = '已暂停';
         } else {
             // 开始
             this.pomodoro.isRunning = true;
+            this.pomodoro.isPaused = false;
             document.getElementById('pomoStart').textContent = '暂停';
-            document.getElementById('pomoStatus').textContent = this.pomodoro.isBreak ? '休息中...' : '专注中...';
+            
+            if (this.pomodoro.isBreak) {
+                document.getElementById('pomoStatus').textContent = '☕ 休息中...';
+                document.getElementById('pomoTip').textContent = '放松一下，喝杯水吧';
+            } else {
+                document.getElementById('pomoStatus').textContent = '🎯 专注中...';
+                const task = this.pomodoro.currentTask || '正在专注';
+                document.getElementById('pomoTip').textContent = `当前任务：${task}`;
+            }
             
             this.pomodoro.timer = setInterval(() => {
                 this.pomodoro.timeLeft--;
+                
+                // 记录专注时间
+                if (!this.pomodoro.isBreak) {
+                    this.pomodoro.totalFocusTime++;
+                }
+                
                 this.updatePomodoroDisplay();
+                
+                // 最后10秒播放滴答声
+                if (this.pomodoro.timeLeft <= 10 && this.pomodoro.timeLeft > 0) {
+                    this.playSound('tick');
+                }
                 
                 if (this.pomodoro.timeLeft <= 0) {
                     this.completePomodoro();
@@ -481,35 +665,58 @@ const App = {
     completePomodoro() {
         clearInterval(this.pomodoro.timer);
         this.pomodoro.isRunning = false;
+        this.playSound('complete');
         
         if (!this.pomodoro.isBreak) {
             // 完成专注
             this.pomodoro.completed++;
+            this.pomodoro.sessionCount++;
             this.saveData();
+            
             document.getElementById('pomoCompleted').textContent = this.pomodoro.completed;
-            alert('🎉 专注完成！休息5分钟吧');
-            this.pomodoro.timeLeft = 5 * 60;
-            this.pomodoro.isBreak = true;
+            document.getElementById('pomoTotalFocus').textContent = Math.floor(this.pomodoro.totalFocusTime / 60);
+            document.getElementById('pomoSession').textContent = `${this.pomodoro.sessionCount}/4`;
+            
+            // 判断是否需要长休息
+            if (this.pomodoro.sessionCount >= 4) {
+                this.pomodoro.timeLeft = this.pomodoro.longBreak * 60;
+                this.pomodoro.isBreak = true;
+                this.pomodoro.sessionCount = 0;
+                document.getElementById('pomoSession').textContent = '0/4';
+                document.getElementById('pomoTip').textContent = '🎉 连续4个番茄！享受${this.pomodoro.longBreak}分钟长休息吧';
+            } else {
+                this.pomodoro.timeLeft = this.pomodoro.shortBreak * 60;
+                this.pomodoro.isBreak = true;
+                document.getElementById('pomoTip').textContent = '✅ 专注完成！休息一下吧';
+            }
         } else {
             // 完成休息
-            alert('休息结束，准备下一轮专注！');
-            this.pomodoro.timeLeft = 25 * 60;
+            this.pomodoro.timeLeft = this.pomodoro.workDuration * 60;
             this.pomodoro.isBreak = false;
+            document.getElementById('pomoTip').textContent = '💪 休息结束，继续加油！';
         }
         
         this.updatePomodoroDisplay();
         document.getElementById('pomoStart').textContent = '开始专注';
-        document.getElementById('pomoStatus').textContent = this.pomodoro.isBreak ? '休息时间' : '准备专注';
+        document.getElementById('pomoStatus').textContent = this.pomodoro.isBreak ? '☕ 休息时间' : '🎯 准备专注';
+    },
+
+    skipPomodoro() {
+        if (confirm('确定要跳过当前阶段吗？')) {
+            this.completePomodoro();
+        }
     },
 
     resetPomodoro() {
         clearInterval(this.pomodoro.timer);
         this.pomodoro.isRunning = false;
+        this.pomodoro.isPaused = false;
         this.pomodoro.isBreak = false;
-        this.pomodoro.timeLeft = 25 * 60;
+        this.pomodoro.timeLeft = this.pomodoro.workDuration * 60;
         this.updatePomodoroDisplay();
         document.getElementById('pomoStart').textContent = '开始专注';
         document.getElementById('pomoStatus').textContent = '准备专注';
+        document.getElementById('pomoTip').textContent = '💡 每4个番茄后享受一次长休息';
     },
 
     // ==================== 计算器 ====================
